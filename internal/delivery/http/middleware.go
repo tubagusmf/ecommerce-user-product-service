@@ -15,21 +15,25 @@ import (
 func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		authHeader := c.Request().Header.Get(echo.HeaderAuthorization)
+		if authHeader == "" {
+			return echo.NewHTTPError(http.StatusUnauthorized, "Missing token")
+		}
+
 		splitAuth := strings.Split(authHeader, " ")
 		if len(splitAuth) != 2 || splitAuth[0] != "Bearer" {
-			return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token format")
 		}
 
 		accessToken := splitAuth[1]
-		log.Println(accessToken)
 
 		var claim model.CustomClaims
 		err := helper.DecodeToken(accessToken, &claim)
-		log.Println(claim)
 		if err != nil {
-			log.Println(claim)
-			return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+			log.Println("Token decoding failed:", err)
+			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid or expired token")
 		}
+
+		// Simpan claim user ke dalam context
 		ctx := context.WithValue(c.Request().Context(), model.BearerAuthKey, claim)
 		req := c.Request().WithContext(ctx)
 		c.SetRequest(req)

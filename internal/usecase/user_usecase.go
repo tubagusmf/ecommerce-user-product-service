@@ -151,6 +151,7 @@ func (u *UserUsecase) Create(ctx context.Context, in model.CreateUserInput) (tok
 		Name:     in.Name,
 		Email:    in.Email,
 		Password: passwordHashed,
+		Role:     in.Role,
 	})
 
 	if err != nil {
@@ -172,6 +173,7 @@ func (u *UserUsecase) Update(ctx context.Context, id int64, in model.UpdateUserI
 		"id":    id,
 		"name":  in.Name,
 		"email": in.Email,
+		"role":  in.Role,
 	})
 
 	err := v.StructCtx(ctx, in)
@@ -201,6 +203,7 @@ func (u *UserUsecase) Update(ctx context.Context, id int64, in model.UpdateUserI
 		Name:      in.Name,
 		Password:  string(hashedPassword),
 		Email:     in.Email,
+		Role:      in.Role,
 		UpdatedAt: time.Now(),
 	}
 
