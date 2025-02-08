@@ -48,7 +48,6 @@ func (handler *UserHandler) Login(c echo.Context) error {
 	})
 }
 
-// Logout handler untuk menghapus sesi user
 func (handler *UserHandler) Logout(c echo.Context) error {
 	token := c.Request().Header.Get("Authorization")
 	if token == "" {
@@ -66,7 +65,6 @@ func (handler *UserHandler) Logout(c echo.Context) error {
 	})
 }
 
-// FindById handler untuk mendapatkan data user berdasarkan ID
 func (handler *UserHandler) FindById(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
@@ -74,13 +72,11 @@ func (handler *UserHandler) FindById(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid user ID format")
 	}
 
-	// Ambil user yang sedang login dari token
 	claim, ok := c.Request().Context().Value(model.BearerAuthKey).(model.CustomClaims)
 	if !ok {
 		return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized")
 	}
 
-	// User hanya boleh melihat datanya sendiri
 	if claim.UserID != id {
 		return echo.NewHTTPError(http.StatusForbidden, "Access denied")
 	}
@@ -98,7 +94,6 @@ func (handler *UserHandler) FindById(c echo.Context) error {
 	})
 }
 
-// FindAll handler untuk mendapatkan semua user dengan filter opsional
 func (handler *UserHandler) FindAll(c echo.Context) error {
 	var filter model.User
 	filter.Name = c.QueryParam("name")
@@ -115,14 +110,12 @@ func (handler *UserHandler) FindAll(c echo.Context) error {
 	})
 }
 
-// Create handler untuk mendaftarkan user baru
 func (handler *UserHandler) Create(c echo.Context) error {
 	var body model.CreateUserInput
 	if err := c.Bind(&body); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request body")
 	}
 
-	// Validasi data input (nama & email tidak boleh kosong)
 	if body.Name == "" || body.Email == "" || body.Password == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "All fields are required")
 	}
@@ -139,7 +132,6 @@ func (handler *UserHandler) Create(c echo.Context) error {
 	})
 }
 
-// Update handler untuk mengubah data user
 func (handler *UserHandler) Update(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
@@ -173,7 +165,6 @@ func (handler *UserHandler) Update(c echo.Context) error {
 	})
 }
 
-// Delete handler untuk menghapus user (soft delete)
 func (handler *UserHandler) Delete(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
@@ -186,7 +177,6 @@ func (handler *UserHandler) Delete(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized")
 	}
 
-	// User hanya boleh menghapus akunnya sendiri
 	if claim.UserID != id {
 		return echo.NewHTTPError(http.StatusForbidden, "Access denied")
 	}

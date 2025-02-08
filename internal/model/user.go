@@ -58,6 +58,7 @@ type UserSession struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+// validation
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
