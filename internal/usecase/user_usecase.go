@@ -46,24 +46,21 @@ func (u *UserUsecase) Login(ctx context.Context, in model.LoginInput) (token str
 		return "", errors.New("mismatch password")
 	}
 
-	// Buat token JWT
 	token, err = helper.GenerateToken(user.ID)
 	if err != nil {
 		log.Error(err)
 		return "", err
 	}
 
-	// Hapus sesi lama jika ada
 	err = u.userRepo.DeleteSession(ctx, token)
 	if err != nil {
-		log.Warn("Failed to delete old session:", err) // Gunakan warn karena ini opsional
+		log.Warn("Failed to delete old session:", err)
 	}
 
-	// Simpan sesi baru
 	session := model.UserSession{
 		UserID:    user.ID,
 		Token:     token,
-		ExpiresAt: time.Now().Add(24 * time.Hour), // Sesi berlaku 1 hari
+		ExpiresAt: time.Now().Add(24 * time.Hour),
 		CreatedAt: time.Now(),
 	}
 	_, err = u.userRepo.CreateSession(ctx, session)

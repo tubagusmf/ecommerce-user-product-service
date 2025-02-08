@@ -104,7 +104,6 @@ func (u *UserRepo) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-// CreateSession menambahkan sesi user baru
 func (u *UserRepo) CreateSession(ctx context.Context, session model.UserSession) (*model.UserSession, error) {
 	session.CreatedAt = time.Now()
 	err := u.db.WithContext(ctx).Create(&session).Error
@@ -114,7 +113,6 @@ func (u *UserRepo) CreateSession(ctx context.Context, session model.UserSession)
 	return &session, nil
 }
 
-// FindSessionByToken mencari sesi berdasarkan token
 func (u *UserRepo) FindSessionByToken(ctx context.Context, token string) (*model.UserSession, error) {
 	var session model.UserSession
 	err := u.db.WithContext(ctx).
@@ -130,7 +128,6 @@ func (u *UserRepo) FindSessionByToken(ctx context.Context, token string) (*model
 	return &session, nil
 }
 
-// DeleteSession menghapus sesi berdasarkan token
 func (u *UserRepo) DeleteSession(ctx context.Context, token string) error {
 	err := u.db.WithContext(ctx).Where("token = ?", token).Delete(&model.UserSession{}).Error
 	if err != nil {

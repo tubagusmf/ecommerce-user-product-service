@@ -33,7 +33,6 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid or expired token")
 		}
 
-		// Simpan claim user ke dalam context
 		ctx := context.WithValue(c.Request().Context(), model.BearerAuthKey, claim)
 		req := c.Request().WithContext(ctx)
 		c.SetRequest(req)
