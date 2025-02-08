@@ -1,0 +1,7 @@
+env: development
+port: 5432
+postgres:
+  dbhost: 127.0.0.1
+  dbuser: postgres
+  dbpass: postgres
+  dbname: db_ecommerce_user_product
