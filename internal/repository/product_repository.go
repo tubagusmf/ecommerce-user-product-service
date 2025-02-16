@@ -92,3 +92,10 @@ func (r *ProductRepo) Delete(ctx context.Context, id int64) error {
 	}
 	return nil
 }
+
+func (r *ProductRepo) GetPriceByID(ctx context.Context, productID int64, price *float64) error {
+	return r.db.WithContext(ctx).Model(&model.Product{}).
+		Select("price").
+		Where("id = ?", productID).
+		Scan(price).Error
+}

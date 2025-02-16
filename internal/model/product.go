@@ -11,6 +11,7 @@ type IProductRepository interface {
 	Create(ctx context.Context, product Product) error
 	Update(ctx context.Context, product Product) error
 	Delete(ctx context.Context, id int64) error
+	GetPriceByID(ctx context.Context, productID int64, price *float64) error
 }
 
 type IProductUsecase interface {

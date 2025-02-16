@@ -44,12 +44,15 @@ func httpServer(cmd *cobra.Command, args []string) {
 	productUsecase := usecase.NewProductUsecase(productRepo)
 	categoryRepo := repository.NewCategoryRepo(postgresDB)
 	categoryUsecase := usecase.NewCategoryUsecase(categoryRepo)
+	orderRepo := repository.NewOrderRepo(postgresDB)
+	orderUsecase := usecase.NewOrderUsecase(orderRepo, productRepo)
 
 	e := echo.New()
 
 	handlerHttp.NewUserHandler(e, userUsecase)
 	handlerHttp.NewProductHandler(e, productUsecase)
 	handlerHttp.NewCategoryHandler(e, categoryUsecase)
+	handlerHttp.NewOrderHandler(e, orderUsecase)
 
 	var wg sync.WaitGroup
 	errCh := make(chan error, 2)
