@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package pb.order_service;
+
+option go_package = "pb/order_service";
+
+import "pb/order_service/order.proto";
+
+message CreateOrderRequest {
+    int64 user_id = 1;
+    repeated OrderItem items = 2;
+}
+
+message CreateOrderResponse {
+    Order order = 1;
+}
+
+message GetOrderRequest {
+    string order_id = 1;
+}
+
+message GetOrderResponse {
+    Order order = 1;
+}
+
+message MarkOrderPaidRequest {
+    string order_id = 1;
+}
+
+message MarkOrderPaidResponse {
+    bool success = 1;
+}
+
+message ListOrdersRequest {
+    int64 user_id = 1;
+}
+
+message ListOrdersResponse {
+    repeated Order orders = 1;
+}
+
+service OrderService {
+    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+    rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+    rpc MarkOrderPaid(MarkOrderPaidRequest) returns (MarkOrderPaidResponse);
+    rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
+}

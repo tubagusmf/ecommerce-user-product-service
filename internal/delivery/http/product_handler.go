@@ -70,14 +70,15 @@ func (handler *ProductHandler) Create(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err := handler.productUsecase.Create(c.Request().Context(), body)
+	createdProduct, err := handler.productUsecase.Create(c.Request().Context(), body)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, Response{
-		Status:  http.StatusOK,
+	return c.JSON(http.StatusCreated, Response{
+		Status:  http.StatusCreated,
 		Message: "Product created successfully",
+		Data:    createdProduct,
 	})
 }
 
@@ -93,7 +94,7 @@ func (handler *ProductHandler) Update(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err = handler.productUsecase.Update(c.Request().Context(), id, body)
+	updateProduct, err := handler.productUsecase.Update(c.Request().Context(), id, body)
 	if err != nil {
 		if err.Error() == "product not found" {
 			return echo.NewHTTPError(http.StatusNotFound, "Product not found")
@@ -104,7 +105,7 @@ func (handler *ProductHandler) Update(c echo.Context) error {
 	return c.JSON(http.StatusOK, Response{
 		Status:  http.StatusOK,
 		Message: "Product updated successfully",
-		Data:    body,
+		Data:    updateProduct,
 	})
 }
 

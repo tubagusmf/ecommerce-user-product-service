@@ -48,7 +48,7 @@ func (u *ProductUsecase) FindById(ctx context.Context, id int64) (*model.Product
 	return product, nil
 }
 
-func (u *ProductUsecase) Create(ctx context.Context, in model.CreateProductInput) error {
+func (u *ProductUsecase) Create(ctx context.Context, in model.CreateProductInput) (model.Product, error) {
 	log := logrus.WithFields(logrus.Fields{
 		"in": in,
 	})
@@ -56,11 +56,11 @@ func (u *ProductUsecase) Create(ctx context.Context, in model.CreateProductInput
 	err := helper.Validator.Struct(in)
 	if err != nil {
 		log.Error("Validation error:", err)
-		return err
+		return model.Product{}, err
 	}
 
 	if in.Name == "" || in.Price <= 0 || in.Stock < 0 || in.ImageUrl == "" {
-		return errors.New("invalid product data")
+		return model.Product{}, errors.New("invalid product data")
 	}
 
 	product := model.Product{
@@ -76,13 +76,13 @@ func (u *ProductUsecase) Create(ctx context.Context, in model.CreateProductInput
 
 	if err := u.productRepo.Create(ctx, product); err != nil {
 		log.Error("Failed to create product: ", err)
-		return err
+		return model.Product{}, err
 	}
 
-	return nil
+	return product, nil
 }
 
-func (u *ProductUsecase) Update(ctx context.Context, id int64, in model.UpdateProductInput) error {
+func (u *ProductUsecase) Update(ctx context.Context, id int64, in model.UpdateProductInput) (*model.Product, error) {
 	log := logrus.WithFields(logrus.Fields{
 		"id": id,
 		"in": in,
@@ -91,12 +91,12 @@ func (u *ProductUsecase) Update(ctx context.Context, id int64, in model.UpdatePr
 	err := helper.Validator.Struct(in)
 	if err != nil {
 		log.Error("Validation error:", err)
-		return err
+		return &model.Product{}, err
 	}
 
 	existingProduct, err := u.productRepo.FindById(ctx, id)
 	if err != nil {
-		return err
+		return &model.Product{}, err
 	}
 
 	existingProduct.Name = in.Name
@@ -109,10 +109,10 @@ func (u *ProductUsecase) Update(ctx context.Context, id int64, in model.UpdatePr
 
 	if err := u.productRepo.Update(ctx, *existingProduct); err != nil {
 		log.Error("Failed to update product: ", err)
-		return err
+		return &model.Product{}, err
 	}
 
-	return nil
+	return existingProduct, nil
 }
 
 func (u *ProductUsecase) Delete(ctx context.Context, id int64) error {

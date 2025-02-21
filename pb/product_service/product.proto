@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb.product_service;
+
+option go_package = "pb/product_service";
+
+message Product {
+    int64 product_id = 1;
+    string name = 2;
+    string description = 3;
+    double price = 4;
+    int64 stock = 5;
+}

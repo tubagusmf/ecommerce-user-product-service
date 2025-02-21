@@ -74,7 +74,7 @@ func (handler *OrderHandler) Create(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err := handler.orderUsecase.Create(c.Request().Context(), body)
+	createOrder, err := handler.orderUsecase.Create(c.Request().Context(), body)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -82,6 +82,7 @@ func (handler *OrderHandler) Create(c echo.Context) error {
 	return c.JSON(http.StatusOK, Response{
 		Status:  http.StatusOK,
 		Message: "Order created successfully",
+		Data:    createOrder,
 	})
 }
 

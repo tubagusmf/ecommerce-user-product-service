@@ -15,7 +15,9 @@ type IOrderRepository interface {
 type IOrderUsecase interface {
 	FindAll(ctx context.Context, userID int64) ([]*Order, error)
 	FindById(ctx context.Context, id string) (*Order, error)
-	Create(ctx context.Context, in CreateOrderInput) error
+	ListByUserID(ctx context.Context, userID int64) ([]*Order, error)
+	Create(ctx context.Context, in CreateOrderInput) (*Order, error)
+	Update(ctx context.Context, order *Order) error
 	Delete(ctx context.Context, id string) error
 }
 
@@ -33,7 +35,7 @@ type OrderItem struct {
 	ID        int64      `json:"id" gorm:"primaryKey;autoIncrement"`
 	OrderID   string     `json:"order_id" gorm:"index"`
 	ProductID int64      `json:"product_id"`
-	Quantity  int        `json:"quantity"`
+	Quantity  int64      `json:"quantity"`
 	Price     float64    `json:"price"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
@@ -47,5 +49,5 @@ type CreateOrderInput struct {
 
 type CreateOrderItem struct {
 	ProductID int64 `json:"product_id" validate:"required"`
-	Quantity  int   `json:"quantity" validate:"required"`
+	Quantity  int64 `json:"quantity" validate:"required"`
 }

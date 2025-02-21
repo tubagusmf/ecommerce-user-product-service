@@ -60,19 +60,36 @@ func (u *OrderUsecase) FindById(ctx context.Context, id string) (*model.Order, e
 	return order, nil
 }
 
-func (u *OrderUsecase) Create(ctx context.Context, in model.CreateOrderInput) error {
+func (u *OrderUsecase) ListByUserID(ctx context.Context, userID int64) ([]*model.Order, error) {
+	log := logrus.WithFields(logrus.Fields{
+		"user_id": userID,
+	})
+
+	log.Info("Fetching orders for user...")
+
+	orders, err := u.orderRepo.FindAll(ctx, userID)
+	if err != nil {
+		log.WithError(err).Error("Failed to fetch orders")
+		return nil, err
+	}
+
+	log.Infof("Found %d orders for user", len(orders))
+	return orders, nil
+}
+
+func (u *OrderUsecase) Create(ctx context.Context, in model.CreateOrderInput) (*model.Order, error) {
 	log := logrus.WithFields(logrus.Fields{
 		"in": in,
 	})
 
 	if len(in.OrderItems) == 0 {
-		return errors.New("order_items cannot be empty")
+		return nil, errors.New("order items cannot be empty")
 	}
 
 	err := helper.Validator.Struct(in)
 	if err != nil {
 		log.Error("Validation error:", err)
-		return err
+		return nil, err
 	}
 
 	order := model.Order{
@@ -86,7 +103,7 @@ func (u *OrderUsecase) Create(ctx context.Context, in model.CreateOrderInput) er
 		price, err := u.getProductPrice(ctx, item.ProductID)
 		if err != nil {
 			log.Error("Failed to get product price: ", err)
-			return err
+			return nil, err
 		}
 
 		order.TotalAmount += price * float64(item.Quantity)
@@ -102,9 +119,32 @@ func (u *OrderUsecase) Create(ctx context.Context, in model.CreateOrderInput) er
 
 	if err := u.orderRepo.SaveOrder(ctx, &order); err != nil {
 		log.Error("Failed to save order: ", err)
+		return nil, err
+	}
+
+	return &order, nil
+}
+
+func (u *OrderUsecase) Update(ctx context.Context, order *model.Order) error {
+	if order == nil || order.ID == "" {
+		logrus.WithContext(ctx).Error("Invalid order: nil or empty ID")
+		return errors.New("invalid order: order is nil or has empty ID")
+	}
+
+	log := logrus.WithFields(logrus.Fields{
+		"order_id": order.ID,
+		"user_id":  order.UserID,
+	})
+
+	log.Info("Updating order...")
+
+	err := u.orderRepo.SaveOrder(ctx, order)
+	if err != nil {
+		log.WithError(err).Error("Failed to update order")
 		return err
 	}
 
+	log.Info("Order successfully updated")
 	return nil
 }
 
