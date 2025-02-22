@@ -7,6 +7,7 @@ import (
 
 	"github.com/tubagusmf/ecommerce-user-product-service/internal/helper"
 	"github.com/tubagusmf/ecommerce-user-product-service/internal/model"
+	"github.com/tubagusmf/ecommerce-user-product-service/pb/user_service"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/sirupsen/logrus"
@@ -16,14 +17,17 @@ import (
 var v = validator.New()
 
 type UserUsecase struct {
-	userRepo model.IUserRepository
+	userRepo   model.IUserRepository
+	userClient user_service.UserServiceClient
 }
 
 func NewUserUsecase(
 	userRepo model.IUserRepository,
+	userClient user_service.UserServiceClient,
 ) model.IUserUsecase {
 	return &UserUsecase{
-		userRepo: userRepo,
+		userRepo:   userRepo,
+		userClient: userClient,
 	}
 }
 

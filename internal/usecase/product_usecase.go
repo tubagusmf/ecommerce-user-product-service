@@ -8,15 +8,21 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/tubagusmf/ecommerce-user-product-service/internal/helper"
 	"github.com/tubagusmf/ecommerce-user-product-service/internal/model"
+	"github.com/tubagusmf/ecommerce-user-product-service/pb/product_service"
 )
 
 type ProductUsecase struct {
-	productRepo model.IProductRepository
+	productRepo   model.IProductRepository
+	productClient product_service.ProductServiceClient
 }
 
-func NewProductUsecase(productRepo model.IProductRepository) model.IProductUsecase {
+func NewProductUsecase(
+	productRepo model.IProductRepository,
+	productClient product_service.ProductServiceClient,
+) model.IProductUsecase {
 	return &ProductUsecase{
-		productRepo: productRepo,
+		productRepo:   productRepo,
+		productClient: productClient,
 	}
 }
 
