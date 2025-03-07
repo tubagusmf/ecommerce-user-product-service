@@ -1,10 +1,25 @@
 syntax = "proto3";
 
-package pb.order_service;
+option go_package = "github.com/tubagusmf/ecommerce-user-product-service/pb/order";
 
-option go_package = "pb/order_service";
+package order;
 
-import "pb/order_service/order.proto";
+import "google/protobuf/timestamp.proto";
+
+message Order {
+    string order_id = 1;
+    int64 user_id = 2;
+    repeated OrderItem items = 3;
+    double total_amount = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
+}
+
+message OrderItem {
+    int64 product_id = 1;
+    int64 quantity = 2;
+    double price = 3;
+}
 
 message CreateOrderRequest {
     int64 user_id = 1;
@@ -32,7 +47,8 @@ message MarkOrderPaidResponse {
 }
 
 message ListOrdersRequest {
-    int64 user_id = 1;
+    string order_id = 1;
+    int64 user_id = 2;
 }
 
 message ListOrdersResponse {

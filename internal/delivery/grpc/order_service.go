@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/tubagusmf/ecommerce-user-product-service/internal/model"
-	pb "github.com/tubagusmf/ecommerce-user-product-service/pb/order_service"
+	pb "github.com/tubagusmf/ecommerce-user-product-service/pb/order"
 )
 
 type OrdergRPCHandler struct {

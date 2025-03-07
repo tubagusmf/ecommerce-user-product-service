@@ -1,10 +1,16 @@
 syntax = "proto3";
 
-package pb.product_service;
+option go_package = "github.com/tubagusmf/ecommerce-user-product-service/pb/product";
 
-option go_package = "pb/product_service";
+package product;
 
-import "pb/product_service/product.proto";
+message Product {
+    int64 product_id = 1;
+    string name = 2;
+    string description = 3;
+    double price = 4;
+    int64 stock = 5;
+}
 
 message GetProductRequest {
     int64 product_id = 1;
@@ -14,7 +20,9 @@ message GetProductResponse {
     Product product = 1;
 }
 
-message ListProductsRequest {}
+message ListProductsRequest {
+    int64 product_id = 1;
+}
 
 message ListProductsResponse {
     repeated Product products = 1;

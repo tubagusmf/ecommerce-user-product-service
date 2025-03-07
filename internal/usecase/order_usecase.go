@@ -8,19 +8,19 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/tubagusmf/ecommerce-user-product-service/internal/helper"
 	"github.com/tubagusmf/ecommerce-user-product-service/internal/model"
-	"github.com/tubagusmf/ecommerce-user-product-service/pb/order_service"
+	"github.com/tubagusmf/ecommerce-user-product-service/pb/order"
 )
 
 type OrderUsecase struct {
 	orderRepo   model.IOrderRepository
 	productRepo model.IProductRepository
-	orderClient order_service.OrderServiceClient
+	orderClient order.OrderServiceClient
 }
 
 func NewOrderUsecase(
 	orderRepo model.IOrderRepository,
 	productRepo model.IProductRepository,
-	orderClient order_service.OrderServiceClient,
+	orderClient order.OrderServiceClient,
 ) model.IOrderUsecase {
 	return &OrderUsecase{
 		orderRepo:   orderRepo,

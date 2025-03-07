@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: pb/order_service/service.proto
+// source: pb/order/order.proto
 
-package order_service
+package order
 
 import (
 	context "context"
@@ -19,10 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrderService_CreateOrder_FullMethodName   = "/pb.order_service.OrderService/CreateOrder"
-	OrderService_GetOrder_FullMethodName      = "/pb.order_service.OrderService/GetOrder"
-	OrderService_MarkOrderPaid_FullMethodName = "/pb.order_service.OrderService/MarkOrderPaid"
-	OrderService_ListOrders_FullMethodName    = "/pb.order_service.OrderService/ListOrders"
+	OrderService_CreateOrder_FullMethodName   = "/order.OrderService/CreateOrder"
+	OrderService_GetOrder_FullMethodName      = "/order.OrderService/GetOrder"
+	OrderService_MarkOrderPaid_FullMethodName = "/order.OrderService/MarkOrderPaid"
+	OrderService_ListOrders_FullMethodName    = "/order.OrderService/ListOrders"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -210,7 +210,7 @@ func _OrderService_ListOrders_Handler(srv interface{}, ctx context.Context, dec 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var OrderService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.order_service.OrderService",
+	ServiceName: "order.OrderService",
 	HandlerType: (*OrderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -231,5 +231,5 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pb/order_service/service.proto",
+	Metadata: "pb/order/order.proto",
 }

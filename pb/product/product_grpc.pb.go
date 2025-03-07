@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: pb/product_service/service.proto
+// source: pb/product/product.proto
 
-package product_service
+package product
 
 import (
 	context "context"
@@ -19,11 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProductService_GetProduct_FullMethodName    = "/pb.product_service.ProductService/GetProduct"
-	ProductService_ListProducts_FullMethodName  = "/pb.product_service.ProductService/ListProducts"
-	ProductService_CreateProduct_FullMethodName = "/pb.product_service.ProductService/CreateProduct"
-	ProductService_UpdateProduct_FullMethodName = "/pb.product_service.ProductService/UpdateProduct"
-	ProductService_DeleteProduct_FullMethodName = "/pb.product_service.ProductService/DeleteProduct"
+	ProductService_GetProduct_FullMethodName    = "/product.ProductService/GetProduct"
+	ProductService_ListProducts_FullMethodName  = "/product.ProductService/ListProducts"
+	ProductService_CreateProduct_FullMethodName = "/product.ProductService/CreateProduct"
+	ProductService_UpdateProduct_FullMethodName = "/product.ProductService/UpdateProduct"
+	ProductService_DeleteProduct_FullMethodName = "/product.ProductService/DeleteProduct"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -244,7 +244,7 @@ func _ProductService_DeleteProduct_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ProductService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.product_service.ProductService",
+	ServiceName: "product.ProductService",
 	HandlerType: (*ProductServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -269,5 +269,5 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pb/product_service/service.proto",
+	Metadata: "pb/product/product.proto",
 }
