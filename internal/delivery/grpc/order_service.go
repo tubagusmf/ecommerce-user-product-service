@@ -6,6 +6,8 @@ import (
 
 	"github.com/tubagusmf/ecommerce-user-product-service/internal/model"
 	pb "github.com/tubagusmf/ecommerce-user-product-service/pb/order"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type OrdergRPCHandler struct {
@@ -45,16 +47,19 @@ func (h *OrdergRPCHandler) GetOrder(ctx context.Context, req *pb.GetOrderRequest
 func (h *OrdergRPCHandler) MarkOrderPaid(ctx context.Context, req *pb.MarkOrderPaidRequest) (*pb.MarkOrderPaidResponse, error) {
 	order, err := h.orderUsecase.FindById(ctx, req.OrderId)
 	if err != nil {
-		log.Println("Order not found:", err)
-		return &pb.MarkOrderPaidResponse{Success: false}, err
+		log.Println("[ERROR] Order not found:", err)
+		return &pb.MarkOrderPaidResponse{Success: false}, status.Errorf(codes.NotFound, "Order not found")
 	}
+
+	order.Status = "success"
 
 	err = h.orderUsecase.Update(ctx, order)
 	if err != nil {
-		log.Println("Error updating order:", err)
-		return &pb.MarkOrderPaidResponse{Success: false}, err
+		log.Println("[ERROR] Failed to update order status:", err)
+		return &pb.MarkOrderPaidResponse{Success: false}, status.Errorf(codes.Internal, "Failed to update order status")
 	}
 
+	log.Printf("[INFO] Order %s marked as PAID", req.OrderId)
 	return &pb.MarkOrderPaidResponse{Success: true}, nil
 }
 
@@ -83,7 +88,6 @@ func convertOrderItems(items []*pb.OrderItem) []model.CreateOrderItem {
 	}
 	return orderItems
 }
-
 func convertOrderToPB(order *model.Order) *pb.Order {
 	pbItems := make([]*pb.OrderItem, len(order.OrderItems))
 	for i, item := range order.OrderItems {

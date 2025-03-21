@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -102,17 +103,19 @@ func (u *OrderUsecase) Create(ctx context.Context, in model.CreateOrderInput) (*
 	order := model.Order{
 		UserID:      in.UserID,
 		TotalAmount: 0,
+		Status:      "pending",
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
 
 	for _, item := range in.OrderItems {
-		price, err := u.getProductPrice(ctx, item.ProductID)
+		product, err := u.productRepo.FindById(ctx, item.ProductID)
 		if err != nil {
-			log.Error("Failed to get product price: ", err)
-			return nil, err
+			log.Error("Product not found: ", item.ProductID)
+			return nil, errors.New("product not found")
 		}
 
+		price := product.Price
 		order.TotalAmount += price * float64(item.Quantity)
 
 		order.OrderItems = append(order.OrderItems, model.OrderItem{
@@ -145,7 +148,7 @@ func (u *OrderUsecase) Update(ctx context.Context, order *model.Order) error {
 
 	log.Info("Updating order...")
 
-	err := u.orderRepo.SaveOrder(ctx, order)
+	err := u.orderRepo.Update(ctx, order)
 	if err != nil {
 		log.WithError(err).Error("Failed to update order")
 		return err
@@ -186,11 +189,27 @@ func (u *OrderUsecase) Delete(ctx context.Context, id string) error {
 	return nil
 }
 
-func (u *OrderUsecase) getProductPrice(ctx context.Context, productID int64) (float64, error) {
-	var price float64
-	err := u.productRepo.GetPriceByID(ctx, productID, &price)
+func (u *OrderUsecase) UpdateOrderStatus(ctx context.Context, orderID string, status string) error {
+	order, err := u.FindById(ctx, orderID)
 	if err != nil {
-		return 0, err
+		return fmt.Errorf("order not found: %w", err)
 	}
-	return price, nil
+
+	order.Status = status
+
+	err = u.Update(ctx, order)
+	if err != nil {
+		return fmt.Errorf("failed to update order status: %w", err)
+	}
+
+	return nil
 }
+
+// func (u *OrderUsecase) getProductPrice(ctx context.Context, productID int64) (float64, error) {
+// 	var price float64
+// 	err := u.productRepo.GetPriceByID(ctx, productID, &price)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	return price, nil
+// }

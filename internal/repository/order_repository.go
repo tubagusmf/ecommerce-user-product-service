@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/tubagusmf/ecommerce-user-product-service/internal/model"
 	"gorm.io/gorm"
 )
@@ -110,6 +111,36 @@ func (r *OrderRepository) SaveOrder(ctx context.Context, order *model.Order) err
 	return nil
 }
 
+func (r *OrderRepository) Update(ctx context.Context, order *model.Order) error {
+	if order == nil || order.ID == "" {
+		return errors.New("invalid order: ID is required")
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"order_id": order.ID,
+		"status":   order.Status,
+	}).Info("[DEBUG] Updating order in database...")
+
+	err := r.db.WithContext(ctx).
+		Model(&order).
+		Where("id = ?", order.ID).
+		Updates(map[string]interface{}{
+			"status":     order.Status,
+			"updated_at": time.Now(),
+		}).Error
+
+	if err != nil {
+		logrus.WithError(err).Error("[ERROR] Failed to update order")
+		return err
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"order_id": order.ID,
+		"status":   order.Status,
+	}).Info("[INFO] Order successfully updated")
+
+	return nil
+}
 func (r *OrderRepository) Delete(ctx context.Context, id string) error {
 	now := time.Now()
 	err := r.db.WithContext(ctx).

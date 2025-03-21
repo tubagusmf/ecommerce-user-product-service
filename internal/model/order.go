@@ -9,6 +9,7 @@ type IOrderRepository interface {
 	FindAll(ctx context.Context, userID int64) ([]*Order, error)
 	FindById(ctx context.Context, id string) (*Order, error)
 	SaveOrder(ctx context.Context, order *Order) error
+	Update(ctx context.Context, order *Order) error
 	Delete(ctx context.Context, id string) error
 }
 
@@ -19,12 +20,14 @@ type IOrderUsecase interface {
 	Create(ctx context.Context, in CreateOrderInput) (*Order, error)
 	Update(ctx context.Context, order *Order) error
 	Delete(ctx context.Context, id string) error
+	UpdateOrderStatus(ctx context.Context, orderID string, status string) error
 }
 
 type Order struct {
 	ID          string      `json:"id"`
 	UserID      int64       `json:"user_id"`
 	TotalAmount float64     `json:"total_amount"`
+	Status      string      `json:"status"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
 	DeletedAt   *time.Time  `json:"-"`
